@@ -1,8 +1,9 @@
 var gulp = require('gulp');
 var browserSync = require('browser-sync').create();
 var less = require('gulp-less');
+var ts = require('gulp-typescript');
 
-gulp.task('browser-sync', function () {
+gulp.task('browser-sync', function() {
     browserSync.init({
         server: {
             baseDir: "./src/"
@@ -11,8 +12,16 @@ gulp.task('browser-sync', function () {
     browserSync.watch('./src/').on('change', browserSync.reload);
 
 });
+gulp.task('ts', function() {
+    return gulp.src('./src/**/*.ts')
+        .pipe(ts({
+            noImplicitAny: true,
+            outFile: 'output.js'
+        }))
+        .pipe(gulp.dest('./src/js'));
+});
 
-gulp.task('less', function () {
+gulp.task('less', function() {
     return gulp.src('./src/less/**/*.less')
         .pipe(less())
         .pipe(gulp.dest('./src/css'))
@@ -24,3 +33,4 @@ var lessPath = [
     './src/less/**/*.less'
 ]
 gulp.watch(lessPath, gulp.series('less'));
+gulp.watch('./src/**/*.ts', gulp.series('ts'));
