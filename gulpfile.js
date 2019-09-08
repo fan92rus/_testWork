@@ -14,10 +14,7 @@ gulp.task('browser-sync', function() {
 });
 gulp.task('ts', function() {
     return gulp.src('./src/**/*.ts')
-        .pipe(ts({
-            noImplicitAny: true,
-            outFile: 'output.js'
-        }))
+        .pipe(ts())
         .pipe(gulp.dest('./src/js'));
 });
 

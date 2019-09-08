@@ -13,17 +13,123 @@
     <div class="content">
         <div class="fields">
             <input type="number" id="day" min="1" max="31" placeholder="День" name="" id="">
-            <input type="number" min="1" max="12" placeholder="Месяц" name="" id="">
-            <input type="number" min="1940" max="2100" placeholder="Год" name="" id="">
-            <a class="btn blue">
+            <input type="number" id="mounth" min="1" max="12" placeholder="Месяц" name="" id="">
+            <input type="number" id="year" min="1" max="10000" placeholder="Год" name="" id="">
+            <a id="search" class="btn blue">
                     Найти
                 </a>
         </div>
         <div class="data">
-
+            <div class="user">
+                <img src="img/no_image.png" alt="" class="img">
+                <div class="desc">
+                    <h3 class="name">Имя Фамилия</h3>
+                    <a href="https://vk.com/" class="link">Ссылка</a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
 
 </html>
 <script src="js/output.js"></script>
+<script src="js/axios.js"></script>
+<script src="js/Utils.js"></script>
+<script src="js/vkApi.js"></script>
+<script>
+    let checker = new Checker();
+    let utils = new Utils();
+    let axios = new PostMan();
+    let api = new vkApi(axios);
+
+    function CheckNumber(e, min, max) {
+        console.log(e);
+        if (checker.CheckInputText(e.key, "\\d+")) {
+            let val = e.target.value;
+            console.log(checker.CheckNumber(val, min, max));
+        }
+    }
+    var data = {
+        day: 0,
+        mounth: 0,
+        year: 0
+    };
+    //#region Привязка полей к модели
+    utils.BindField("#day", data, 'day');
+    utils.BindField("#mounth", data, 'mounth');
+    utils.BindField("#year", data, 'year');
+    //#endregion
+
+    utils.AddEvent(Events.Click, "#search", e => {
+        //#region  Проверка полей ввода
+        if (!checker.CheckNumber(data.day, 1, 31)) {
+            alert("Введите день правильно");
+            return;
+        }
+        if (!checker.CheckNumber(data.mounth, 1, 12)) {
+            alert("Введите месяц правильно");
+            return;
+        }
+        if (!checker.CheckNumber(data.year, 1940, new Date().getFullYear())) {
+            alert("Введите год правильно");
+            return;
+        }
+        //#endregion
+
+        function loadImages(e, d) {
+            let arr = d.response;
+            console.log(arr);
+            for (let i = 0; i < arr.length; i++) {
+                const user = arr[i];
+                utils.LoadImage("#i_" + user.id, user.photo_200);
+            }
+        } //Ленивая подгрузка фото
+
+        function userBlock(id, first_name, last_name) {
+            return '<div class="user"> <img id="i_' + id + '" src="./img/no_image.png" alt="" class="img">' +
+                ' <div class="desc">' +
+                '<p class="name"> ' + first_name + " " + element.last_name + ' </p>' +
+                '<a href = "https://vk.com/id' + id + '"class = "link" > Ссылка </a> </div>' +
+                '</div>'
+        } //Текстовая модель блока пользователя
+
+        function genPages(users) {
+            let domData = utils.GetBy(".data"); //Обьект с пользователями
+            let res = ""; // Обработаные пользователи
+            let ids = []; //Пул ид пользователей
+            for (let index = 0; index < users.length; index++) {
+                const user = users[index];
+                ids.push(element.id);
+                res += userBlock(user.id, user.first_name, user.last_name); //Добавляем пользователя
+            }
+
+            domData.innerHTML = res; //Добавляем сгекнереные блоки
+
+            let pageSize = 25; //Рамзмер блока подгрузки пользователей
+            for (let index = 0; index < ids.length; index += pageSize) {
+                const subIds = ids.slice(index, index + pageSize);
+                let uids = subIds.join(',');
+
+                setTimeout(() => {
+                    api.GetUsers({
+                            params: {
+                                user_ids: uids,
+                                fields: "photo_200"
+                            }
+                        }, loadImages) //Получаем аккауны пользователей и передаем в подгрузку изображений
+                }, index * 300); //Задержка чтобы вк апи не выдавало ошибку
+            }
+        }
+        //Ищем пользователей и рендерим
+        api.Search({
+            params: {
+                count: 1000,
+                birth_day: data.day,
+                birth_month: data.mounth,
+                birth_year: data.year,
+            }
+        }, (e, d) => {
+            genPages(d.response.items); //Рендер
+        })
+    });
+</script>

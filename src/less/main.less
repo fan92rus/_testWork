@@ -2,7 +2,7 @@
 
 body {
     height    : 100%;
-    background: rgb(43, 48, 87);
+    background: rgb(250, 250, 250);
 }
 
 .content {
@@ -16,6 +16,13 @@ body {
         border       : 1px solid #eee;
         padding      : 4px 10px;
         border-radius: 3px;
+        flex-grow    : 1;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin            : 0;
+        }
     }
 
     .fields {
@@ -27,13 +34,51 @@ body {
         flex-wrap    : wrap;
         margin       : 0 auto;
         align-items  : center;
-        
+        box-shadow   : 0px 0px 20px #aaa;
     }
 
     .data {
-        width: 100%;
-        height: 500px;
-        background: #979797;
+        width          : 100%;
+        background     : #ffffff;
+        display        : flex;
+        flex-wrap      : wrap;
+        justify-content: space-evenly;
+        align-items    : flex-start;
+        box-shadow     : 0px 0px 20px #aaa;
+
+        .user {
+            box-shadow: 0px 0px 20px #aaa;
+            background: #fff;
+            margin    : 10px;
+            width     : 200px;
+
+            .desc {
+                padding: 10px;
+            }
+
+            a {
+                font-size      : 14pt;
+                text-decoration: none;
+                color          : #424242;
+
+                &:hover {
+                    color: #71c6ff;
+                }
+            }
+
+            img {
+                width     : 100%;
+                object-fit: cover;
+                height    : 200px;
+            }
+
+            transition-duration: .3s;
+
+            &:hover {
+                transition-duration: .3s;
+                box-shadow: 0px 0px 5px #27c2ff;
+            }
+        }
     }
 
     .btn {
@@ -41,15 +86,18 @@ body {
         font-family  : 'Courier New', Courier, monospace;
         font-weight  : bold;
         border-radius: 5px;
-        padding      : 10px;
+        padding      : 5px 10px;
         cursor       : pointer;
+        flex-grow    : 1;
+        margin       : 10px;
 
         &.blue {
-            color              : #fff;
+            color              : rgb(0, 0, 0);
             background         : #65d2fd;
             transition-duration: .3s;
 
             &:hover {
+                color     : #fff;
                 background: #27c2ff;
             }
         }
