@@ -32,15 +32,15 @@
 </body>
 
 </html>
-<script src="js/output.js"></script>
-<script src="js/axios.js"></script>
+<script src="js/Checker.js"></script>
+<script src="js/PostMan.js"></script>
 <script src="js/Utils.js"></script>
 <script src="js/vkApi.js"></script>
 <script>
     let checker = new Checker();
     let utils = new Utils();
-    let axios = new PostMan();
-    let api = new vkApi(axios);
+    let webClient = new PostMan();
+    let api = new vkApi(webClient);
 
     function CheckNumber(e, min, max) {
         console.log(e);
