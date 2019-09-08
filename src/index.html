@@ -99,7 +99,7 @@
             let ids = []; //Пул ид пользователей
             for (let index = 0; index < users.length; index++) {
                 const user = users[index];
-                ids.push(element.id);
+                ids.push(user.id);
                 res += userBlock(user.id, user.first_name, user.last_name); //Добавляем пользователя
             }
 
